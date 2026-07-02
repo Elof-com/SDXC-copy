@@ -1,0 +1,47 @@
+# Bygger SdxcCopy.exe och publicerar en GitHub-release med zip-bilaga
+# varje gång en versionstagg (v*) pushas, t.ex.:
+#
+#   git tag v0.1.0
+#   git push origin v0.1.0
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Hämta koden
+        uses: actions/checkout@v4
+
+      - name: Installera .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Bygg fristående exe
+        run: dotnet publish src/SdxcCopy -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:DebugType=none
+
+      - name: Paketera som zip
+        shell: pwsh
+        run: >
+          Compress-Archive
+          -Path src/SdxcCopy/bin/Release/net8.0-windows10.0.17763.0/win-x64/publish/*
+          -DestinationPath "SDXC-copy-${{ github.ref_name }}-win-x64.zip"
+
+      - name: Skapa release med zip-bilaga
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "${{ github.ref_name }}"
+          "SDXC-copy-${{ github.ref_name }}-win-x64.zip"
+          --title "SDXC-copy ${{ github.ref_name }}"
+          --generate-notes

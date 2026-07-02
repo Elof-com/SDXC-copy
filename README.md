@@ -14,6 +14,19 @@ Designen beskrivs i [DESIGN.md](DESIGN.md). Kortversionen:
 - Import startar först efter en bekräftelse i aviseringen, och en
   avisering visar resultatet.
 
+## Ladda hem
+
+Färdigbyggda versioner finns under
+[Releases](https://github.com/Elof-com/SDXC-copy/releases) — ladda ner
+zip-filen, packa upp `SdxcCopy.exe` och starta. Ingen installation och
+ingen .NET-miljö behövs (Windows 10 version 1809 eller senare, 64-bitars).
+
+Eftersom filen inte är kodsignerad visar Windows SmartScreen en varning
+första gången — välj **Mer information → Kör ändå**.
+
+Nya releaser byggs automatiskt av GitHub Actions när en versionstagg
+pushas (`git tag v0.1.0 && git push origin v0.1.0`).
+
 ## Bygga
 
 Kräver bara den fria [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
