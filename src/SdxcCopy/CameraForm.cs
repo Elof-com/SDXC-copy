@@ -31,7 +31,11 @@ public sealed class CameraForm : Form
         StartPosition = FormStartPosition.CenterScreen;
         ShowInTaskbar = true;
         TopMost = true;
-        ClientSize = new Size(560, 340);
+        // Höjden beräknas från innehållet i stället för ett gissat fast mått,
+        // så att inga fält kan hamna utanför fönstret när text radbryts.
+        AutoSize = true;
+        AutoSizeMode = AutoSizeMode.GrowAndShrink;
+        MinimumSize = new Size(620, 0);
 
         _nameBox.Text = camera.DisplayName;
         _directoryBox.Text = camera.BaseDirectory;
@@ -54,9 +58,11 @@ public sealed class CameraForm : Form
 
         var layout = new TableLayoutPanel
         {
-            Dock = DockStyle.Fill,
+            Dock = DockStyle.Top,
+            AutoSize = true,
+            AutoSizeMode = AutoSizeMode.GrowAndShrink,
             ColumnCount = 2,
-            Padding = new Padding(16, 12, 16, 0),
+            Padding = new Padding(16, 12, 16, 12),
         };
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
@@ -92,22 +98,22 @@ public sealed class CameraForm : Form
             Text = FolderPattern.PlaceholderHelp + "\nStandard: " + FolderPattern.Default,
             AutoSize = true,
             ForeColor = SystemColors.GrayText,
-            Margin = new Padding(0, 4, 0, 8),
+            Margin = new Padding(0, 4, 0, 4),
         });
 
         var buttons = new FlowLayoutPanel
         {
             FlowDirection = FlowDirection.RightToLeft,
-            Dock = DockStyle.Bottom,
             AutoSize = true,
             AutoSizeMode = AutoSizeMode.GrowAndShrink,
-            Padding = new Padding(12),
+            Anchor = AnchorStyles.Right,
+            Margin = new Padding(0, 14, 0, 0),
         };
         buttons.Controls.Add(cancelButton);
         buttons.Controls.Add(okButton);
+        AddFullRow(buttons);
 
         Controls.Add(layout);
-        Controls.Add(buttons);
     }
 
     private void BrowseDirectory()
