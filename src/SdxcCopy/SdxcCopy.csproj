@@ -12,7 +12,7 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
     <InvariantGlobalization>false</InvariantGlobalization>
-    <Version>0.1.0</Version>
+    <Version>1.0.0</Version>
     <Product>SDXC-copy</Product>
     <Description>Kopierar bilder från kamerors SDXC-kort till dator.</Description>
     <Authors>Rikard Elofsson</Authors>
