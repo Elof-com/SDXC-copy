@@ -12,13 +12,6 @@ public sealed record CameraIdentity(string Id, string DisplayName);
 /// </summary>
 public static class CameraIdentifier
 {
-    private static readonly HashSet<string> ImageExtensions = new(StringComparer.OrdinalIgnoreCase)
-    {
-        ".jpg", ".jpeg", ".heic", ".heif", ".tif", ".tiff", ".png",
-        ".dng", ".cr2", ".cr3", ".crw", ".nef", ".nrw", ".arw", ".sr2",
-        ".orf", ".rw2", ".raf", ".pef", ".srw", ".x3f", ".gpr",
-    };
-
     // Så många bildfiler provas innan identifieringen ger upp.
     private const int MaxFilesToProbe = 50;
 
@@ -43,7 +36,7 @@ public static class CameraIdentifier
         {
             files = new DirectoryInfo(dcimPath)
                 .EnumerateFiles("*", SearchOption.AllDirectories)
-                .Where(f => ImageExtensions.Contains(f.Extension))
+                .Where(f => MediaFiles.StillImageExtensions.Contains(f.Extension))
                 .Take(MaxFilesToProbe);
         }
         catch (Exception)

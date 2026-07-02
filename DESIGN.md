@@ -54,7 +54,11 @@ sparas filerna.
 
 ## Vad kopieras
 
-- **Allt under `DCIM`** på kortet, oavsett filtyp — inget missas.
+- **Bild- och videofiler under `DCIM`**, enligt en lista över kända
+  filformat (JPEG/HEIF/PNG, alla vanliga råformat, MP4/MOV m.fl.) —
+  oberoende av kamerafabrikat.
+- Kamerornas hjälpfiler — t.ex. Canons `.CTG`-katalogfiler,
+  `.THM`-miniatyrer och andra fabrikats indexfiler — kopieras **inte**.
 
 ## Dubbletter och kollisioner
 

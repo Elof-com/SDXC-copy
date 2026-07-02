@@ -24,7 +24,8 @@ public sealed class ImportResult
 }
 
 /// <summary>
-/// Kopierar allt under DCIM till kamerans grundkatalog enligt mappmönstret.
+/// Kopierar bild- och videofiler under DCIM (se MediaFiles) till kamerans
+/// grundkatalog enligt mappmönstret. Kamerornas hjälpfiler tas inte med.
 /// Grundprinciper: kortet öppnas strikt läsande och förändras aldrig;
 /// inget i målet skrivs över; redan kopierade filer (samma namn och storlek
 /// i målmappen) kopieras inte igen.
@@ -37,7 +38,10 @@ public static class Importer
     public static ImportResult Run(string dcimPath, CameraConfig camera, Action<int, int, string>? progress = null)
     {
         var result = new ImportResult();
-        var files = new DirectoryInfo(dcimPath).EnumerateFiles("*", SearchOption.AllDirectories).ToList();
+        var files = new DirectoryInfo(dcimPath)
+            .EnumerateFiles("*", SearchOption.AllDirectories)
+            .Where(MediaFiles.IsMediaFile)
+            .ToList();
 
         for (var i = 0; i < files.Count; i++)
         {
