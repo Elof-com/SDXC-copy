@@ -3,6 +3,9 @@
 #
 #   git tag v0.1.0
 #   git push origin v0.1.0
+#
+# Kan också startas manuellt under fliken Actions ("Run workflow");
+# då anges versionen där och taggen skapas av releasen.
 
 name: Release
 
@@ -10,6 +13,11 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versionstagg att skapa, t.ex. v1.0.0"
+        required: true
 
 permissions:
   contents: write
@@ -17,6 +25,8 @@ permissions:
 jobs:
   release:
     runs-on: windows-latest
+    env:
+      VERSION: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.version || github.ref_name }}
     steps:
       - name: Hämta koden
         uses: actions/checkout@v4
@@ -34,14 +44,14 @@ jobs:
         run: >
           Compress-Archive
           -Path src/SdxcCopy/bin/Release/net8.0-windows10.0.17763.0/win-x64/publish/*
-          -DestinationPath "SDXC-copy-${{ github.ref_name }}-win-x64.zip"
+          -DestinationPath "SDXC-copy-${{ env.VERSION }}-win-x64.zip"
 
       - name: Skapa release med zip-bilaga
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: >
-          gh release create "${{ github.ref_name }}"
-          "SDXC-copy-${{ github.ref_name }}-win-x64.zip"
-          --title "SDXC-copy ${{ github.ref_name }}"
+          gh release create "${{ env.VERSION }}"
+          "SDXC-copy-${{ env.VERSION }}-win-x64.zip"
+          --title "SDXC-copy ${{ env.VERSION }}"
           --generate-notes
