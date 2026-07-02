@@ -1,4 +1,5 @@
 using Microsoft.Win32;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace SdxcCopy;
@@ -26,66 +27,91 @@ public sealed class SettingsForm : Form
         _config = config;
 
         Text = "Inställningar — SDXC-copy";
+        // Skalning efter textstorlek så att fönstret fungerar på skärmar
+        // med 125/150 % DPI-skalning.
+        AutoScaleDimensions = new SizeF(7F, 15F);
+        AutoScaleMode = AutoScaleMode.Font;
         StartPosition = FormStartPosition.CenterScreen;
-        ClientSize = new System.Drawing.Size(640, 320);
-        MinimumSize = new System.Drawing.Size(520, 260);
+        ClientSize = new Size(780, 440);
+        MinimumSize = new Size(640, 400);
 
-        _cameraList.Columns.Add("Kamera", 180);
-        _cameraList.Columns.Add("Grundkatalog", 260);
-        _cameraList.Columns.Add("Mappmönster", 170);
+        _cameraList.Columns.Add("Kamera", 190);
+        _cameraList.Columns.Add("Grundkatalog", 330);
+        _cameraList.Columns.Add("Mappmönster", 210);
         _cameraList.DoubleClick += (_, _) => EditSelected();
 
-        var editButton = new Button { Text = "Ändra…", Width = 100 };
+        Button MakeButton(string text)
+        {
+            var button = new Button
+            {
+                Text = text,
+                AutoSize = true,
+                MinimumSize = new Size(120, 34),
+                Margin = new Padding(0, 0, 0, 8),
+            };
+            return button;
+        }
+
+        var editButton = MakeButton("Ändra…");
         editButton.Click += (_, _) => EditSelected();
-        var removeButton = new Button { Text = "Ta bort", Width = 100 };
+        var removeButton = MakeButton("Ta bort");
         removeButton.Click += (_, _) => RemoveSelected();
-        var closeButton = new Button { Text = "Stäng", Width = 100, DialogResult = DialogResult.OK };
+        var closeButton = MakeButton("Stäng");
+        closeButton.DialogResult = DialogResult.OK;
+        closeButton.Anchor = AnchorStyles.Right;
         CancelButton = closeButton;
 
         var autostartBox = new CheckBox
         {
             Text = "Starta SDXC-copy automatiskt med Windows",
             AutoSize = true,
+            Anchor = AnchorStyles.Left,
             Checked = IsAutostartEnabled(),
         };
         autostartBox.CheckedChanged += (_, _) => SetAutostart(autostartBox.Checked);
 
-        var sidePanel = new FlowLayoutPanel
+        var sideButtons = new FlowLayoutPanel
         {
             FlowDirection = FlowDirection.TopDown,
-            Dock = DockStyle.Right,
-            Width = 116,
-            Padding = new Padding(8, 0, 0, 0),
+            Dock = DockStyle.Fill,
+            AutoSize = true,
+            Margin = new Padding(12, 0, 0, 0),
         };
-        sidePanel.Controls.Add(editButton);
-        sidePanel.Controls.Add(removeButton);
+        sideButtons.Controls.Add(editButton);
+        sideButtons.Controls.Add(removeButton);
 
-        var bottomPanel = new FlowLayoutPanel
+        var layout = new TableLayoutPanel
         {
-            FlowDirection = FlowDirection.LeftToRight,
-            Dock = DockStyle.Bottom,
-            Height = 44,
-            Padding = new Padding(8),
+            Dock = DockStyle.Fill,
+            ColumnCount = 2,
+            RowCount = 2,
+            Padding = new Padding(16),
         };
-        bottomPanel.Controls.Add(autostartBox);
-        closeButton.Anchor = AnchorStyles.Right;
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+        layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
-        var closePanel = new FlowLayoutPanel
+        layout.Controls.Add(_cameraList, 0, 0);
+        layout.Controls.Add(sideButtons, 1, 0);
+
+        var bottomRow = new TableLayoutPanel
         {
-            FlowDirection = FlowDirection.RightToLeft,
-            Dock = DockStyle.Bottom,
-            Height = 44,
-            Padding = new Padding(8),
+            Dock = DockStyle.Fill,
+            ColumnCount = 2,
+            RowCount = 1,
+            AutoSize = true,
+            Margin = new Padding(0, 12, 0, 0),
         };
-        closePanel.Controls.Add(closeButton);
+        bottomRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        bottomRow.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        bottomRow.Controls.Add(autostartBox, 0, 0);
+        bottomRow.Controls.Add(closeButton, 1, 0);
 
-        var content = new Panel { Dock = DockStyle.Fill, Padding = new Padding(12) };
-        content.Controls.Add(_cameraList);
-        content.Controls.Add(sidePanel);
+        layout.Controls.Add(bottomRow, 0, 1);
+        layout.SetColumnSpan(bottomRow, 2);
 
-        Controls.Add(content);
-        Controls.Add(bottomPanel);
-        Controls.Add(closePanel);
+        Controls.Add(layout);
 
         RefreshCameraList();
     }
@@ -110,7 +136,10 @@ public sealed class SettingsForm : Form
     {
         var camera = SelectedCamera;
         if (camera is null)
+        {
+            MessageBox.Show(this, "Markera en kamera i listan först.", "SDXC-copy");
             return;
+        }
 
         using var form = new CameraForm(camera, isNew: false);
         if (form.ShowDialog(this) == DialogResult.OK)
@@ -124,7 +153,10 @@ public sealed class SettingsForm : Form
     {
         var camera = SelectedCamera;
         if (camera is null)
+        {
+            MessageBox.Show(this, "Markera en kamera i listan först.", "SDXC-copy");
             return;
+        }
 
         var answer = MessageBox.Show(
             this,

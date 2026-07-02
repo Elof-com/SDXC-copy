@@ -1,16 +1,18 @@
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace SdxcCopy;
 
 /// <summary>
 /// Guiden för att lägga till en ny kamera, och redigering av en befintlig.
-/// Här kopplas kameran till sin grundkatalog och sitt mappmönster.
+/// Här kopplas kameran till sin grundkatalog och sitt mappmönster
+/// (katalogstrukturen som skapas under grundkatalogen).
 /// </summary>
 public sealed class CameraForm : Form
 {
-    private readonly TextBox _nameBox = new() { Width = 340 };
-    private readonly TextBox _directoryBox = new() { Width = 260, ReadOnly = true };
-    private readonly TextBox _patternBox = new() { Width = 340 };
+    private readonly TextBox _nameBox = new() { Anchor = AnchorStyles.Left | AnchorStyles.Right };
+    private readonly TextBox _directoryBox = new() { Anchor = AnchorStyles.Left | AnchorStyles.Right, ReadOnly = true };
+    private readonly TextBox _patternBox = new() { Anchor = AnchorStyles.Left | AnchorStyles.Right };
 
     public CameraConfig Camera { get; }
 
@@ -19,25 +21,34 @@ public sealed class CameraForm : Form
         Camera = camera;
 
         Text = isNew ? "Ny kamera — SDXC-copy" : "Ändra kamera — SDXC-copy";
+        // Skalning efter textstorlek så att fönstret fungerar på skärmar
+        // med 125/150 % DPI-skalning.
+        AutoScaleDimensions = new SizeF(7F, 15F);
+        AutoScaleMode = AutoScaleMode.Font;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
         MinimizeBox = false;
         StartPosition = FormStartPosition.CenterScreen;
-        ClientSize = new System.Drawing.Size(400, 240);
         ShowInTaskbar = true;
         TopMost = true;
+        ClientSize = new Size(560, 340);
 
         _nameBox.Text = camera.DisplayName;
         _directoryBox.Text = camera.BaseDirectory;
         _patternBox.Text = camera.FolderPattern;
 
-        var browseButton = new Button { Text = "Bläddra…", Width = 74 };
+        var browseButton = new Button { Text = "Bläddra…", AutoSize = true };
         browseButton.Click += (_, _) => BrowseDirectory();
 
-        var okButton = new Button { Text = "OK", Width = 90, DialogResult = DialogResult.None };
+        var okButton = new Button { Text = "OK", AutoSize = true, MinimumSize = new Size(96, 0) };
         okButton.Click += (_, _) => TrySave();
-        var cancelButton = new Button { Text = "Avbryt", Width = 90, DialogResult = DialogResult.Cancel };
-
+        var cancelButton = new Button
+        {
+            Text = "Avbryt",
+            AutoSize = true,
+            MinimumSize = new Size(96, 0),
+            DialogResult = DialogResult.Cancel,
+        };
         AcceptButton = okButton;
         CancelButton = cancelButton;
 
@@ -45,46 +56,55 @@ public sealed class CameraForm : Form
         {
             Dock = DockStyle.Fill,
             ColumnCount = 2,
-            Padding = new Padding(12),
+            Padding = new Padding(16, 12, 16, 0),
         };
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
 
-        void AddRow(string label, Control control, Control? extra = null)
+        void AddFullRow(Control control)
         {
-            layout.Controls.Add(new Label { Text = label, AutoSize = true, Margin = new Padding(0, 8, 0, 2) });
-            layout.SetColumnSpan(layout.Controls[^1], extra is null ? 2 : 1);
-            if (extra is not null)
-                layout.Controls.Add(new Label { Text = "", AutoSize = true });
-            layout.Controls.Add(control);
-            if (extra is not null)
-                layout.Controls.Add(extra);
-            else
-                layout.SetColumnSpan(control, 2);
+            layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            layout.Controls.Add(control, 0, layout.RowCount);
+            layout.SetColumnSpan(control, 2);
+            layout.RowCount++;
         }
 
-        AddRow("Kamerans namn:", _nameBox);
-        AddRow("Grundkatalog (dit bilderna kopieras):", _directoryBox, browseButton);
-        AddRow("Mappmönster under grundkatalogen:", _patternBox);
-
-        layout.Controls.Add(new Label
+        Label MakeLabel(string text) => new()
         {
-            Text = FolderPattern.PlaceholderHelp,
+            Text = text,
             AutoSize = true,
-            ForeColor = System.Drawing.SystemColors.GrayText,
-            Margin = new Padding(0, 2, 0, 8),
+            Margin = new Padding(0, 10, 0, 3),
+        };
+
+        AddFullRow(MakeLabel("Kamerans namn:"));
+        AddFullRow(_nameBox);
+        AddFullRow(MakeLabel("Grundkatalog (dit bilderna kopieras):"));
+
+        layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        layout.Controls.Add(_directoryBox, 0, layout.RowCount);
+        layout.Controls.Add(browseButton, 1, layout.RowCount);
+        layout.RowCount++;
+
+        AddFullRow(MakeLabel("Mappmönster (katalogstrukturen under grundkatalogen):"));
+        AddFullRow(_patternBox);
+        AddFullRow(new Label
+        {
+            Text = FolderPattern.PlaceholderHelp + "\nStandard: " + FolderPattern.Default,
+            AutoSize = true,
+            ForeColor = SystemColors.GrayText,
+            Margin = new Padding(0, 4, 0, 8),
         });
-        layout.SetColumnSpan(layout.Controls[^1], 2);
 
         var buttons = new FlowLayoutPanel
         {
             FlowDirection = FlowDirection.RightToLeft,
             Dock = DockStyle.Bottom,
-            Height = 42,
-            Padding = new Padding(8),
+            AutoSize = true,
+            AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            Padding = new Padding(12),
         };
-        buttons.Controls.Add(okButton);
         buttons.Controls.Add(cancelButton);
+        buttons.Controls.Add(okButton);
 
         Controls.Add(layout);
         Controls.Add(buttons);
