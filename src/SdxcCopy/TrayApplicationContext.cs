@@ -187,8 +187,28 @@ public sealed class TrayApplicationContext : ApplicationContext
                 return;
             }
 
-            Notifications.Info("Import startad", $"Kopierar från {camera.DisplayName} ({driveRoot})…");
-            var result = Importer.Run(dcim, camera);
+            // Förloppsfönster i stället för en "import startad"-avisering.
+            ProgressForm? progressForm = null;
+            _driveWatcher.Invoke(() =>
+            {
+                progressForm = new ProgressForm($"Importerar från {camera.DisplayName} ({driveRoot}) — SDXC-copy");
+                progressForm.Show();
+            });
+
+            ImportResult result;
+            try
+            {
+                result = Importer.Run(dcim, camera, (done, total, fileName) =>
+                    progressForm?.UpdateProgress(done, total, fileName));
+            }
+            finally
+            {
+                _driveWatcher.BeginInvoke(() =>
+                {
+                    progressForm?.Close();
+                    progressForm?.Dispose();
+                });
+            }
 
             var title = result.Failed == 0 ? "Import klar" : "Import klar med fel";
             var text = $"{camera.DisplayName}: {result.Summary()}";

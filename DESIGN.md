@@ -76,7 +76,9 @@ sparas filerna.
 2. När ett kort upptäcks visas en avisering:
    *"Kort från [kamera] upptäckt — starta import?"* — användaren
    **bekräftar med ett klick** innan kopieringen börjar.
-3. Efter importen visas en **kort avisering** med resultatet
+3. Under kopieringen visas ett **förloppsfönster** med förloppsindikator,
+   antal filer och namnet på filen som just kopieras.
+4. Efter importen visas en **kort avisering** med resultatet
    (t.ex. "127 filer kopierade, 43 hoppades över"). Ingen loggfil sparas.
 
 ## Felhantering

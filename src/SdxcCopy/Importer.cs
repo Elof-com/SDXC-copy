@@ -33,12 +33,16 @@ public static class Importer
 {
     private const int MaxReportedErrors = 20;
 
-    public static ImportResult Run(string dcimPath, CameraConfig camera)
+    /// <param name="progress">Anropas per fil med (klara, totalt, filnamn) för förloppsvisning.</param>
+    public static ImportResult Run(string dcimPath, CameraConfig camera, Action<int, int, string>? progress = null)
     {
         var result = new ImportResult();
+        var files = new DirectoryInfo(dcimPath).EnumerateFiles("*", SearchOption.AllDirectories).ToList();
 
-        foreach (var file in new DirectoryInfo(dcimPath).EnumerateFiles("*", SearchOption.AllDirectories))
+        for (var i = 0; i < files.Count; i++)
         {
+            var file = files[i];
+            progress?.Invoke(i + 1, files.Count, file.Name);
             try
             {
                 ImportFile(file, camera, result);
