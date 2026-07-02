@@ -36,6 +36,9 @@ public sealed class CameraForm : Form
         AutoSize = true;
         AutoSizeMode = AutoSizeMode.GrowAndShrink;
         MinimumSize = new Size(620, 0);
+        // Extra utrymme i botten — autosizade dialoger kan annars klippa
+        // sista raden med några pixlar vid DPI-skalning.
+        Padding = new Padding(0, 0, 0, 20);
 
         _nameBox.Text = camera.DisplayName;
         _directoryBox.Text = camera.BaseDirectory;
@@ -107,7 +110,7 @@ public sealed class CameraForm : Form
             AutoSize = true,
             AutoSizeMode = AutoSizeMode.GrowAndShrink,
             Anchor = AnchorStyles.Right,
-            Margin = new Padding(0, 14, 0, 0),
+            Margin = new Padding(0, 14, 0, 6),
         };
         buttons.Controls.Add(cancelButton);
         buttons.Controls.Add(okButton);
