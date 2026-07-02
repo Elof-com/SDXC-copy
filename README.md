@@ -1,0 +1,44 @@
+# SDXC-copy
+
+Ett Windows-program som ligger i systemfältet, upptäcker när ett SDXC-kort
+från en kamera sätts i och kopierar bilderna till rätt plats på datorn.
+
+Designen beskrivs i [DESIGN.md](DESIGN.md). Kortversionen:
+
+- **Kortet förändras aldrig** — allt läses strikt skrivskyddat.
+- Kameran känns igen via EXIF (modell + serienummer); varje kamera har en
+  egen grundkatalog och ett eget mappmönster, t.ex.
+  `{ÅÅÅÅ}/{MM}/{ÅÅÅÅ}-{MM}-{DD}` → `2026/07/2026-07-02/`.
+- Redan kopierade filer (samma namn och storlek i målmappen) hoppas över;
+  namnkollisioner får ett suffix som `IMG_0001 (2).JPG` — inget skrivs över.
+- Import startar först efter en bekräftelse i aviseringen, och en
+  avisering visar resultatet.
+
+## Bygga
+
+Kräver bara den fria [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+(kompilatorn ingår — inget behöver köpas).
+
+```
+dotnet build SdxcCopy.sln -c Release
+```
+
+Körbar fil som enda `.exe` (kräver ingen separat .NET-installation på måldatorn):
+
+```
+dotnet publish src/SdxcCopy -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
+```
+
+Resultatet hamnar under `src/SdxcCopy/bin/Release/net8.0-windows10.0.17763.0/win-x64/publish/`.
+
+## Använda
+
+1. Starta `SdxcCopy.exe` — en ikon läggs i systemfältet vid klockan.
+2. Sätt i ett SDXC-kort. Första gången en kamera dyker upp öppnas en guide
+   där du väljer grundkatalog (och mappmönster om du vill ändra standard).
+3. Därefter räcker det att sätta i kortet och klicka **Starta import** i
+   aviseringen. När kopieringen är klar visas resultatet.
+4. Högerklicka på ikonen för **Inställningar** (kameror, kataloger,
+   mappmönster, autostart med Windows) eller **Sök efter kort nu**.
+
+Inställningarna sparas i `%APPDATA%\SDXC-copy\config.json`.

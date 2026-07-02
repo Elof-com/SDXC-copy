@@ -2,7 +2,7 @@
 
 Program för att kopiera bilder från kamerors SDXC-kort till dator.
 
-Status: **hela designen beslutad** — implementation väntar på bekräftelse.
+Status: **designen beslutad och implementerad** — källkoden finns under `src/SdxcCopy/`.
 
 ## Grundprinciper
 
