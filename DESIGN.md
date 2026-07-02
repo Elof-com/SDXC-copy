@@ -2,8 +2,7 @@
 
 Program för att kopiera bilder från kamerors SDXC-kort till dator.
 
-Status: **funktionsdesign beslutad** — app-typ, programspråk och implementation
-väntar på bekräftelse.
+Status: **hela designen beslutad** — implementation väntar på bekräftelse.
 
 ## Grundprinciper
 
@@ -30,13 +29,25 @@ väntar på bekräftelse.
 
 ## Mappstruktur i målet
 
-Under kamerans grundkatalog skapas:
+Under kamerans grundkatalog skapas en datumbaserad mappstruktur och där
+sparas filerna.
 
-```
-ÅÅÅÅ/MM/ÅÅÅÅ-MM-DD/
-```
+- **Mappstrukturen är konfigurerbar per kamera** och sparas tillsammans med
+  kamerans grundkatalog. Mönstret anges med platshållare:
 
-och där sparas filerna.
+  | Platshållare | Betydelse            |
+  |--------------|----------------------|
+  | `{ÅÅÅÅ}`     | år, fyra siffror     |
+  | `{MM}`       | månad, två siffror   |
+  | `{DD}`       | dag, två siffror     |
+
+- **Standardmönster** (används om inget annat anges för kameran):
+
+  ```
+  {ÅÅÅÅ}/{MM}/{ÅÅÅÅ}-{MM}-{DD}
+  ```
+
+  vilket ger t.ex. `2026/07/2026-07-02/`.
 
 - **Datumkälla:** fotograferingsdatum ur EXIF. Om EXIF saknas (t.ex. video)
   används filens ändringsdatum på kortet (eller videons metadata om den finns).
@@ -74,18 +85,32 @@ och där sparas filerna.
   ingenting kopieras; en tydlig avisering förklarar varför. Eftersom kortet
   aldrig rörs kan det bara sättas i igen senare.
 
-## Konsekvenser för app-typ (ännu ej beslutad)
+## Typ av applikation
 
-Funktionsvalen innebär att programmet behöver:
+**Systemfältsprogram (tray-applikation).** Motiverat av funktionskraven:
 
-- köras i bakgrunden (bevaka enhetsinsläpp),
-- kunna visa aviseringar med knappar (bekräfta import, resultat),
-- ha ett litet gränssnitt för guiden "ny kamera" och för att se/ändra
-  kopplingen kamera → grundkatalog.
+- körs i bakgrunden och bevakar enhetsinsläpp,
+- visar aviseringar med knappar (bekräfta import, resultat),
+- högerklick på ikonen i systemfältet öppnar inställningarna: guiden
+  "ny kamera" samt lista över kameror med grundkatalog och mappmönster,
+- kan startas automatiskt med Windows.
 
-## Ej beslutat
+## Programspråk och verktyg
 
-- Typ av applikation.
-- Programspråk/teknikstack.
-- Var kopplingen kamera → grundkatalog lagras på datorn (detalj som följer
-  av teknikvalet).
+**C# på .NET** — enbart fria verktyg, ingen kompilator behöver köpas:
+
+- **.NET SDK** (gratis, öppen källkod; kompilatorn ingår, `dotnet build`).
+- **Windows Forms** för systemfältsikon och inställningsfönster
+  (ingår i .NET, beprövat för tray-appar).
+- **MetadataExtractor** (fritt bibliotek, Apache 2.0) för EXIF-läsning.
+- **Windows aviseringar** med knappar via det fria paketet
+  CommunityToolkit (Microsoft.Toolkit.Uwp.Notifications).
+- Utvecklingsmiljö efter smak: VS Code eller Visual Studio Community
+  (båda gratis).
+- Resultatet blir en vanlig `.exe`.
+
+## Lagring av inställningar
+
+- Inställningarna (kamera → grundkatalog, mappmönster per kamera) sparas
+  som en JSON-fil i användarens profil: `%APPDATA%\SDXC-copy\config.json`.
+- Lagras alltid på datorn — aldrig på minneskortet.
