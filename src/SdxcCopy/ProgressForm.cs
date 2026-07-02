@@ -38,6 +38,8 @@ public sealed class ProgressForm : Form
         ControlBox = false;
         StartPosition = FormStartPosition.CenterScreen;
         ShowInTaskbar = true;
+        // Överst så att förloppet inte hamnar bakom fönstret användaren står i.
+        TopMost = true;
         ClientSize = new Size(520, 92);
 
         var layout = new Panel { Dock = DockStyle.Fill, Padding = new Padding(16, 14, 16, 14) };

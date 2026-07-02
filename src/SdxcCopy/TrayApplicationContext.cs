@@ -194,6 +194,7 @@ public sealed class TrayApplicationContext : ApplicationContext
                 progressForm = new ProgressForm($"Importerar från {camera.DisplayName} ({driveRoot}) — SDXC-copy");
                 progressForm.Show();
             });
+            var shownAt = Environment.TickCount64;
 
             ImportResult result;
             try
@@ -203,6 +204,13 @@ public sealed class TrayApplicationContext : ApplicationContext
             }
             finally
             {
+                // Minsta visningstid, annars blinkar fönstret bara förbi när
+                // allt på kortet redan är kopierat och importen tar en bråkdels
+                // sekund. Körs på bakgrundstråden — UI-tråden blockeras inte.
+                var remaining = 1500 - (Environment.TickCount64 - shownAt);
+                if (remaining > 0)
+                    Thread.Sleep((int)remaining);
+
                 _driveWatcher.BeginInvoke(() =>
                 {
                     progressForm?.Close();
