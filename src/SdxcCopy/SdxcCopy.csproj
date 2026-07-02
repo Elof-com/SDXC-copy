@@ -15,6 +15,9 @@
     <Version>0.1.0</Version>
     <Product>SDXC-copy</Product>
     <Description>Kopierar bilder från kamerors SDXC-kort till dator.</Description>
+    <Authors>Rikard Elofsson</Authors>
+    <Copyright>Copyright Rikard Elofsson (elof@elof.com)</Copyright>
+    <PackageLicenseExpression>PolyForm-Noncommercial-1.0.0</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>

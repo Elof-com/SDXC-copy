@@ -42,3 +42,16 @@ Resultatet hamnar under `src/SdxcCopy/bin/Release/net8.0-windows10.0.17763.0/win
    mappmönster, autostart med Windows) eller **Sök efter kort nu**.
 
 Inställningarna sparas i `%APPDATA%\SDXC-copy\config.json`.
+
+## Licens
+
+Copyright Rikard Elofsson (elof@elof.com).
+
+SDXC-copy är licensierat under
+[PolyForm Noncommercial License 1.0.0](LICENSE.md) — fritt att använda,
+ändra och sprida vidare för icke-kommersiella ändamål. Alla kopior och
+vidareutvecklingar måste behålla licensvillkoren och raden
+
+> Required Notice: Copyright Rikard Elofsson (elof@elof.com)
+
+Kommersiell användning kräver ett separat avtal med upphovsrättsinnehavaren.
