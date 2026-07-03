@@ -27,6 +27,7 @@ public sealed class SettingsForm : Form
         _config = config;
 
         Text = "Inställningar — SDXC-copy";
+        Icon = AppIcon.Get();
         // Skalning efter textstorlek så att fönstret fungerar på skärmar
         // med 125/150 % DPI-skalning.
         AutoScaleDimensions = new SizeF(7F, 15F);

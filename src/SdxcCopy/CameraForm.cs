@@ -21,6 +21,7 @@ public sealed class CameraForm : Form
         Camera = camera;
 
         Text = isNew ? "Ny kamera — SDXC-copy" : "Ändra kamera — SDXC-copy";
+        Icon = AppIcon.Get();
         // Skalning efter textstorlek så att fönstret fungerar på skärmar
         // med 125/150 % DPI-skalning.
         AutoScaleDimensions = new SizeF(7F, 15F);

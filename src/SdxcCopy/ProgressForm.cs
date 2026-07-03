@@ -27,6 +27,7 @@ public sealed class ProgressForm : Form
     public ProgressForm(string title)
     {
         Text = title;
+        Icon = AppIcon.Get();
         // Skalning efter textstorlek så att fönstret fungerar på skärmar
         // med 125/150 % DPI-skalning.
         AutoScaleDimensions = new SizeF(7F, 15F);

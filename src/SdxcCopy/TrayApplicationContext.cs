@@ -31,7 +31,7 @@ public sealed class TrayApplicationContext : ApplicationContext
 
         _trayIcon = new NotifyIcon
         {
-            Icon = System.Drawing.SystemIcons.Application,
+            Icon = AppIcon.Get(),
             Text = "SDXC-copy — bevakar SDXC-kort",
             ContextMenuStrip = menu,
             Visible = true,
