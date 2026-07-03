@@ -56,6 +56,16 @@ Resultatet hamnar under `src/SdxcCopy/bin/Release/net8.0-windows10.0.17763.0/win
 
 Inställningarna sparas i `%APPDATA%\SDXC-copy\config.json`.
 
+## Versioner
+
+Alla versioner finns att hämta under
+[Releases](https://github.com/Elof-com/SDXC-copy/releases).
+
+| Version | Datum | Ändringar |
+|---------|------------|-----------|
+| 1.0.1 | 2026-07-03 | Programikon: på exe-filen, i systemfältet och på alla fönster. |
+| 1.0.0 | 2026-07-02 | Första utgåvan. Bevakning av kortinsläpp, kameraigenkänning via EXIF (modell + serienummer), egen grundkatalog och konfigurerbart mappmönster per kamera, dubblettskydd, kollisionssäker kopiering (kortet lämnas alltid orört), förloppsfönster, aviseringar och autostart med Windows. |
+
 ## Licens
 
 Copyright Rikard Elofsson (elof@elof.com).
