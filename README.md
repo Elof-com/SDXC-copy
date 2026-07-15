@@ -18,7 +18,7 @@ Designen beskrivs i [DESIGN.md](DESIGN.md). Kortversionen:
 
 Färdigbyggda versioner finns under
 [Releases](https://github.com/Elof-com/SDXC-copy/releases) — ladda ner
-zip-filen, packa upp `SdxcCopy.exe` och starta. Ingen installation och
+zip-filen, packa upp `SDXC-copy.exe` och starta. Ingen installation och
 ingen .NET-miljö behövs (Windows 10 version 1809 eller senare, 64-bitars).
 
 Eftersom filen inte är kodsignerad visar Windows SmartScreen en varning
@@ -46,7 +46,7 @@ Resultatet hamnar under `src/SdxcCopy/bin/Release/net8.0-windows10.0.17763.0/win
 
 ## Använda
 
-1. Starta `SdxcCopy.exe` — en ikon läggs i systemfältet vid klockan.
+1. Starta `SDXC-copy.exe` — en ikon läggs i systemfältet vid klockan.
 2. Sätt i ett SDXC-kort. Första gången en kamera dyker upp öppnas en guide
    där du väljer grundkatalog (och mappmönster om du vill ändra standard).
 3. Därefter räcker det att sätta i kortet och klicka **Starta import** i
@@ -63,6 +63,7 @@ Alla versioner finns att hämta under
 
 | Version | Datum | Ändringar |
 |---------|------------|-----------|
+| 1.0.2 | 2026-07-13 | Programfilen heter nu `SDXC-copy.exe` (tidigare `SdxcCopy.exe`); autostartposten i registret uppdaterar sig själv om programmet byter namn eller plats. |
 | 1.0.1 | 2026-07-03 | Programikon: på exe-filen, i systemfältet och på alla fönster. |
 | 1.0.0 | 2026-07-02 | Första utgåvan. Bevakning av kortinsläpp, kameraigenkänning via EXIF (modell + serienummer), egen grundkatalog och konfigurerbart mappmönster per kamera, dubblettskydd, kollisionssäker kopiering (kortet lämnas alltid orört), förloppsfönster, aviseringar och autostart med Windows. |
 

@@ -20,6 +20,10 @@ public sealed class TrayApplicationContext : ApplicationContext
     {
         _config = ConfigStore.Load();
 
+        // Håll autostartens registerpost aktuell om exe-filen bytt namn
+        // eller plats sedan den bockades i (t.ex. efter winget-uppgradering).
+        Autostart.RefreshPath();
+
         _driveWatcher = new DriveWatcher();
         _driveWatcher.DriveArrived += root => Task.Run(() => AnnounceCard(root));
 

@@ -1,4 +1,3 @@
-using Microsoft.Win32;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -10,9 +9,6 @@ namespace SdxcCopy;
 /// </summary>
 public sealed class SettingsForm : Form
 {
-    private const string RunKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    private const string RunValueName = "SDXC-copy";
-
     private readonly AppConfig _config;
     private readonly ListView _cameraList = new()
     {
@@ -67,9 +63,9 @@ public sealed class SettingsForm : Form
             Text = "Starta SDXC-copy automatiskt med Windows",
             AutoSize = true,
             Anchor = AnchorStyles.Left,
-            Checked = IsAutostartEnabled(),
+            Checked = Autostart.IsEnabled(),
         };
-        autostartBox.CheckedChanged += (_, _) => SetAutostart(autostartBox.Checked);
+        autostartBox.CheckedChanged += (_, _) => Autostart.SetEnabled(autostartBox.Checked);
 
         var sideButtons = new FlowLayoutPanel
         {
@@ -173,18 +169,4 @@ public sealed class SettingsForm : Form
         }
     }
 
-    private static bool IsAutostartEnabled()
-    {
-        using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath);
-        return key?.GetValue(RunValueName) is not null;
-    }
-
-    private static void SetAutostart(bool enabled)
-    {
-        using var key = Registry.CurrentUser.CreateSubKey(RunKeyPath);
-        if (enabled)
-            key.SetValue(RunValueName, $"\"{Application.ExecutablePath}\"");
-        else
-            key.DeleteValue(RunValueName, throwOnMissingValue: false);
-    }
 }

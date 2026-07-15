@@ -5,14 +5,16 @@
     <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
     <UseWindowsForms Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</UseWindowsForms>
     <RootNamespace>SdxcCopy</RootNamespace>
-    <AssemblyName>SdxcCopy</AssemblyName>
+    <!-- Filnamnet på exe:n; namnrymden behåller SdxcCopy (bindestreck är
+         inte tillåtna i C#-namnrymder). -->
+    <AssemblyName>SDXC-copy</AssemblyName>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <!-- Tillåter att projektet även kan byggas på icke-Windows (CI). -->
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
     <InvariantGlobalization>false</InvariantGlobalization>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Product>SDXC-copy</Product>
     <Description>Kopierar bilder från kamerors SDXC-kort till dator.</Description>
     <ApplicationIcon>app.ico</ApplicationIcon>
