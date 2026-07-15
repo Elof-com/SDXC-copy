@@ -1,0 +1,18 @@
+# Mall för releasearbetsflödet. Platshållare: {VERSION}, {TAG}, {SHA256}.
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
+PackageIdentifier: RikardElofsson.SDXC-copy
+PackageVersion: {VERSION}
+Platform:
+- Windows.Desktop
+MinimumOSVersion: 10.0.17763.0
+InstallerType: zip
+NestedInstallerType: portable
+NestedInstallerFiles:
+- RelativeFilePath: SDXC-copy.exe
+  PortableCommandAlias: sdxc-copy
+Installers:
+- Architecture: x64
+  InstallerUrl: https://github.com/Elof-com/SDXC-copy/releases/download/{TAG}/SDXC-copy-{TAG}-win-x64.zip
+  InstallerSha256: {SHA256}
+ManifestType: installer
+ManifestVersion: 1.6.0

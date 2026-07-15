@@ -46,12 +46,48 @@ jobs:
           -Path src/SdxcCopy/bin/Release/net8.0-windows10.0.17763.0/win-x64/publish/*
           -DestinationPath "SDXC-copy-${{ env.VERSION }}-win-x64.zip"
 
-      - name: Skapa release med zip-bilaga
+      - name: Skapa release med zip-bilaga (hoppas över om den redan finns)
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >
-          gh release create "${{ env.VERSION }}"
-          "SDXC-copy-${{ env.VERSION }}-win-x64.zip"
-          --title "SDXC-copy ${{ env.VERSION }}"
-          --generate-notes
+        run: |
+          gh release view "$env:VERSION" *> $null
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "Releasen $env:VERSION finns redan - hoppar över skapandet."
+          } else {
+            gh release create "$env:VERSION" "SDXC-copy-$env:VERSION-win-x64.zip" --title "SDXC-copy $env:VERSION" --generate-notes
+          }
+
+      # Skickar automatiskt en versionsuppdatering till microsoft/winget-pkgs.
+      # Kräver repo-hemligheten WINGET_TOKEN: en klassisk GitHub-PAT med
+      # public_repo-rättighet. Saknas den hoppas steget över.
+      - name: Skicka in versionen till winget
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WINGET_TOKEN: ${{ secrets.WINGET_TOKEN }}
+        run: |
+          if (-not $env:WINGET_TOKEN) {
+            Write-Host "Hemligheten WINGET_TOKEN saknas - hoppar över winget-inskickningen."
+            exit 0
+          }
+
+          # Hashen måste räknas på den publicerade filen, inte den nybyggda
+          # (två byggen ger inte samma bytes).
+          New-Item -ItemType Directory -Force released-asset | Out-Null
+          gh release download "$env:VERSION" --pattern "*.zip" --dir released-asset
+          $zip = Get-ChildItem released-asset/*.zip | Select-Object -First 1
+          $hash = (Get-FileHash $zip -Algorithm SHA256).Hash
+
+          # Generera manifesten ur mallarna i winget/templates.
+          $version = $env:VERSION.TrimStart("v")
+          $dir = "generated-manifests/$version"
+          New-Item -ItemType Directory -Force $dir | Out-Null
+          Get-ChildItem winget/templates/*.yaml | ForEach-Object {
+            $content = Get-Content $_.FullName -Raw
+            $content = $content.Replace("{VERSION}", $version).Replace("{TAG}", $env:VERSION).Replace("{SHA256}", $hash)
+            Set-Content -Path (Join-Path $dir $_.Name) -Value $content
+          }
+
+          Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
+          ./wingetcreate.exe submit --token $env:WINGET_TOKEN --prtitle "New version: RikardElofsson.SDXC-copy version $version" $dir
