@@ -63,6 +63,7 @@ Alla versioner finns att hämta under
 
 | Version | Datum | Ändringar |
 |---------|------------|-----------|
+| 1.0.3 | 2026-07-16 | Uppdaterad programikon: motivet fyller nu hela ikonytan och syns tydligare i små storlekar. |
 | 1.0.2 | 2026-07-13 | Programfilen heter nu `SDXC-copy.exe` (tidigare `SdxcCopy.exe`); autostartposten i registret uppdaterar sig själv om programmet byter namn eller plats. |
 | 1.0.1 | 2026-07-03 | Programikon: på exe-filen, i systemfältet och på alla fönster. |
 | 1.0.0 | 2026-07-02 | Första utgåvan. Bevakning av kortinsläpp, kameraigenkänning via EXIF (modell + serienummer), egen grundkatalog och konfigurerbart mappmönster per kamera, dubblettskydd, kollisionssäker kopiering (kortet lämnas alltid orört), förloppsfönster, aviseringar och autostart med Windows. |
